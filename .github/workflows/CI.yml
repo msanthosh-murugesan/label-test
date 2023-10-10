@@ -22,7 +22,6 @@ jobs:
             - name: Testing org-checks
               run: | 
                 echo "Org checks success"
-                exit 1
 
     staging-deploy:
         needs: quality-gate-check
