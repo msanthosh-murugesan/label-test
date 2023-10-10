@@ -20,7 +20,9 @@ jobs:
             - name: Setup checkout
               uses: actions/checkout@v3.3.0
             - name: Testing org-checks
-              run: echo "Org checks success"
+              run: | 
+                echo "Org checks success"
+                exit 1
 
     staging-deploy:
         needs: quality-gate-check
