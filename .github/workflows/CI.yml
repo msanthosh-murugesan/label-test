@@ -1,0 +1,82 @@
+name: CI
+
+on:
+    pull_request:
+        branches: [master]
+        types: [opened, reopened, synchronize, labeled]
+    label:
+        types: [created, edited]
+
+jobs:
+    quality-gate-check:
+        uses: ./.github/workflows/sonar-reports.yml
+        secrets: inherit
+
+    staging-deploy:
+        needs: quality-gate-check
+        if: ${{ needs.quality-gate-check.outputs.test-status == 'true' && needs.quality-gate-check.outputs.sonar-status == 'true' && contains(github.event.pull_request.labels.*.name, 'stage') && !contains(github.event.pull_request.labels.*.name, 'live') }}
+        runs-on: ubuntu-latest
+        outputs:
+            status: ${{steps.deployment.outputs.status}}
+        steps:
+            - name: Setup checkout
+              uses: actions/checkout@v3.3.0
+              with:
+                  fetch-depth: 0
+            - name: Deploy to Appengine
+              id: deployment
+              run: echo "status=true" >> $GITHUB_OUTPUT
+
+    live-deploy:
+        needs: quality-gate-check
+        if: ${{ needs.quality-gate-check.outputs.test-status == 'true' && needs.quality-gate-check.outputs.sonar-status == 'true' && contains(github.event.pull_request.labels.*.name, 'live') && !contains(github.event.pull_request.labels.*.name, 'stage') }}
+        runs-on: ubuntu-latest
+        outputs:
+            status: ${{steps.deployment.outputs.status}}
+        steps:
+            - name: Setup checkout
+              uses: actions/checkout@v3.3.0
+              with:
+                  fetch-depth: 0
+            - name: Deploy to Appengine
+              id: deployment
+              run: echo "status=true" >> $GITHUB_OUTPUT
+
+    assign-labels:
+        needs: [quality-gate-check, staging-deploy, live-deploy]
+        if: always()
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Setup Labels to Add and Remove from PR
+              id: setup-labels
+              run: |
+                  if [[ '${{needs.quality-gate-check.outputs.test-status}}' == 'false' ]]; then
+                    labelsToAdd='test-failed'
+                    labelsToRemove='sonar-failed,deployment-failed'
+                  fi
+
+                  if [[ '${{needs.quality-gate-check.outputs.test-status}}' == 'true' && '${{needs.quality-gate-check.outputs.sonar-status}}' != 'true' ]]; then
+                    labelsToAdd='sonar-failed'
+                    labelsToRemove='test-failed,deployment-failed'
+                  fi
+
+                  if [[ '${{needs.staging-deploy.outputs.status}}' == 'false' || '${{needs.live-deploy.outputs.status}}' == 'false' ]]; then
+                    labelsToAdd='deployment-failed'
+                    labelsToRemove='test-failed,sonar-failed'
+                  fi
+
+                  if [[ '${{needs.quality-gate-check.outputs.test-status}}' == 'true' && '${{needs.quality-gate-check.outputs.sonar-status}}' == 'true' && ('${{needs.staging-deploy.outputs.status}}' == 'true' || '${{needs.live-deploy.outputs.status}}' == 'true') ]]; then
+                    labelsToRemove='test-failed,sonar-failed,deployment-failed'
+                  fi
+
+                  echo "LABELS_TO_ADD=$labelsToAdd" >> "$GITHUB_OUTPUT"
+                  echo "LABELS_TO_REMOVE=$labelsToRemove" >> "$GITHUB_OUTPUT"
+
+            - name: Assign Labels To PR
+              uses: RobinJesba/GitHub-Labeler-Action@v0.1.0
+              if: steps.setup-labels.outputs.LABELS_TO_REMOVE != ''
+              with:
+                  GITHUB_TOKEN: ${{ secrets.LABEL_SECRET }}
+                  LABELS_TO_ADD: ${{ steps.setup-labels.outputs.LABELS_TO_ADD }}
+                  LABELS_TO_REMOVE: ${{ steps.setup-labels.outputs.LABELS_TO_REMOVE }}
