@@ -9,6 +9,7 @@ on:
 
 jobs:
     quality-gate-check:
+        if: ${{ github.event.label.name != 'sonar-failed' && github.event.label.name != 'test-failed' && github.event.label.name != 'deployment-failed' }}
         uses: ./.github/workflows/sonar-reports.yml
         secrets: inherit
 
@@ -55,7 +56,7 @@ jobs:
 
     assign-labels:
         needs: [quality-gate-check, staging-deploy, live-deploy]
-        if: always()
+        if: ${{ always() && github.event.label.name != 'sonar-failed' && github.event.label.name != 'test-failed' && github.event.label.name != 'deployment-failed' }}
         runs-on: ubuntu-latest
 
         steps:
