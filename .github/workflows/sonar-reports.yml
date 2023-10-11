@@ -19,8 +19,6 @@ jobs:
         steps:
             - name: Setup checkout
               uses: actions/checkout@v3.3.0
-              with:
-                  fetch-depth: 0
             - name: Run test cases
               id: unit-test
               run: echo "test-status=true" >> "$GITHUB_OUTPUT"
