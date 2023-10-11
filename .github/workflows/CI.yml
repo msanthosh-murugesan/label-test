@@ -1,4 +1,4 @@
-name: CI test
+name: CI
 
 on:
     pull_request:
@@ -11,17 +11,6 @@ jobs:
     quality-gate-check:
         uses: ./.github/workflows/sonar-reports.yml
         secrets: inherit
-
-    org-checks:
-         if: ${{ github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize' || github.event.action == 'reopened') }} 
-         runs-on: ubuntu-latest
-         needs: quality-gate-check
-         steps:
-            - name: Setup checkout
-              uses: actions/checkout@v3.3.0
-            - name: Testing org-checks
-              run: | 
-                echo "Org checks success"
 
     staging-deploy:
         needs: quality-gate-check
@@ -57,6 +46,7 @@ jobs:
         needs: [quality-gate-check, staging-deploy, live-deploy]
         if: always()
         runs-on: ubuntu-latest
+
         steps:
             - name: Setup Labels to Add and Remove from PR
               id: setup-labels
@@ -65,24 +55,19 @@ jobs:
                     labelsToAdd='test-failed'
                     labelsToRemove='sonar-failed,deployment-failed'
                   fi
-
                   if [[ '${{needs.quality-gate-check.outputs.test-status}}' == 'true' && '${{needs.quality-gate-check.outputs.sonar-status}}' != 'true' ]]; then
                     labelsToAdd='sonar-failed'
                     labelsToRemove='test-failed,deployment-failed'
                   fi
-
                   if [[ '${{needs.staging-deploy.outputs.status}}' == 'false' || '${{needs.live-deploy.outputs.status}}' == 'false' ]]; then
                     labelsToAdd='deployment-failed'
                     labelsToRemove='test-failed,sonar-failed'
                   fi
-
                   if [[ '${{needs.quality-gate-check.outputs.test-status}}' == 'true' && '${{needs.quality-gate-check.outputs.sonar-status}}' == 'true' && ('${{needs.staging-deploy.outputs.status}}' == 'true' || '${{needs.live-deploy.outputs.status}}' == 'true') ]]; then
                     labelsToRemove='test-failed,sonar-failed,deployment-failed'
                   fi
-
                   echo "LABELS_TO_ADD=$labelsToAdd" >> "$GITHUB_OUTPUT"
                   echo "LABELS_TO_REMOVE=$labelsToRemove" >> "$GITHUB_OUTPUT"
-
             - name: Assign Labels To PR
               uses: RobinJesba/GitHub-Labeler-Action@v0.1.0
               if: steps.setup-labels.outputs.LABELS_TO_REMOVE != ''

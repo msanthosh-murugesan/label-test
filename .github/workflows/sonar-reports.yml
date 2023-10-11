@@ -27,7 +27,7 @@ jobs:
             - name: Sonar Quality Scan
               if: ${{ steps.unit-test.outputs.test-status == 'true' }}
               run: echo "Sonar analysis successful"
-          
+
             - name: Sonar Quality Status
               id: sonar-report
               if: ${{ steps.unit-test.outputs.test-status == 'true'}}
