@@ -51,7 +51,7 @@ jobs:
                   fetch-depth: 0
             - name: Deploy to Appengine
               id: deployment
-              run: echo "status=false" >> $GITHUB_OUTPUT
+              run: echo "status=true" >> $GITHUB_OUTPUT
 
     assign-labels:
         needs: [quality-gate-check, staging-deploy, live-deploy]
