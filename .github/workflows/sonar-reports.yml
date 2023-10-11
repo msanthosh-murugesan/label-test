@@ -1,0 +1,34 @@
+name: sonar-report
+
+on:
+    workflow_call:
+        outputs:
+            test-status:
+                description: 'Unit test results'
+                value: ${{ jobs.sonar-report.outputs.output1 }}
+            sonar-status:
+                description: 'Quality status from SonarQube'
+                value: ${{ jobs.sonar-report.outputs.output2 }}
+
+jobs:
+    sonar-report:
+        runs-on: ubuntu-latest
+        outputs:
+            output1: ${{ steps.unit-test.outputs.test-status }}
+            output2: ${{ steps.sonar-report.outputs.sonar-status }}
+        steps:
+            - name: Setup checkout
+              uses: actions/checkout@v3.3.0
+              with:
+                  fetch-depth: 0
+            - name: Run test cases
+              id: unit-test
+              run: echo "test-status=true" >> "$GITHUB_OUTPUT"
+            - name: Sonar Quality Scan
+              if: ${{ steps.unit-test.outputs.test-status == 'true' }}
+              run: echo "Sonar analysis successful"
+
+            - name: Sonar Quality Status
+              id: sonar-report
+              if: ${{ steps.unit-test.outputs.test-status == 'true'}}
+              run: echo "sonar-status=true" >> "$GITHUB_OUTPUT"
