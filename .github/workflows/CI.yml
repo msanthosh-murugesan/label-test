@@ -9,6 +9,7 @@ on:
 
 jobs:
     quality-gate-check:
+        if: github.event.action == 'labeled' && github.event.sender.login != 'github-actions[bot]'
         uses: ./.github/workflows/sonar-reports.yml
         secrets: inherit
 
