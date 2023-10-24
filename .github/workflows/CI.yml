@@ -8,6 +8,14 @@ on:
         types: [created, edited]
 
 jobs:
+    context:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Print github context
+            env:
+              GITHUB_CONTEXT: ${{ toJSON(github) }}
+            run: echo "$GITHUB_CONTEXT"
+            
     quality-gate-check:
         if: ${{ github.event.label.name != 'sonar-failed' && github.event.label.name != 'test-failed' && github.event.label.name != 'deployment-failed' }}
         uses: ./.github/workflows/sonar-reports.yml
