@@ -21,7 +21,7 @@ jobs:
               uses: actions/checkout@v3.3.0
             - name: Run test cases
               id: unit-test
-              run: echo "test-status=true" >> "$GITHUB_OUTPUT"
+              run: echo "test-status=false" >> "$GITHUB_OUTPUT"
             - name: Sonar Quality Scan
               if: ${{ steps.unit-test.outputs.test-status == 'true' }}
               run: echo "Sonar analysis successful"
