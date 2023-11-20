@@ -91,6 +91,6 @@ jobs:
               uses: RobinJesba/GitHub-Labeler-Action@v0.1.0
               if: steps.setup-labels.outputs.LABELS_TO_REMOVE != ''
               with:
-                  GITHUB_TOKEN: ${{ secrets.LABEL_SECRET }}
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   LABELS_TO_ADD: ${{ steps.setup-labels.outputs.LABELS_TO_ADD }}
                   LABELS_TO_REMOVE: ${{ steps.setup-labels.outputs.LABELS_TO_REMOVE }}
