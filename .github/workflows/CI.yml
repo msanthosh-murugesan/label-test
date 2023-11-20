@@ -90,7 +90,7 @@ jobs:
                   echo "LABELS_TO_REMOVE=$labelsToRemove" >> "$GITHUB_OUTPUT"
             - name: Assign Labels To PR
               uses: RobinJesba/GitHub-Labeler-Action@v0.1.0
-              if: steps.setup-labels.outputs.LABELS_TO_REMOVE != ''
+              # if: steps.setup-labels.outputs.LABELS_TO_REMOVE != ''
               with:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   LABELS_TO_ADD: ${{ steps.setup-labels.outputs.LABELS_TO_ADD }}
