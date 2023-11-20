@@ -63,7 +63,8 @@ jobs:
 
     assign-labels:
         needs: [quality-gate-check, staging-deploy, live-deploy]
-        if: ${{ always() && github.event.label.name != 'sonar-failed' && github.event.label.name != 'test-failed' && github.event.label.name != 'deployment-failed' }}
+        # if: ${{ always() && github.event.label.name != 'sonar-failed' && github.event.label.name != 'test-failed' && github.event.label.name != 'deployment-failed' }}
+        if: always()
         runs-on: ubuntu-latest
 
         steps:
