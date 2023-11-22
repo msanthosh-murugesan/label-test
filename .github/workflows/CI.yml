@@ -65,8 +65,12 @@ jobs:
 
     assign-labels:
         needs: [quality-gate-check, staging-deploy, live-deploy]
+        # if: ${{ always() && github.event.label.name != 'sonar-failed' && github.event.label.name != 'test-failed' && github.event.label.name != 'deployment-failed' }}
         if: always()
         runs-on: ubuntu-latest
+        # permissions:
+        #   contents: read
+        #   pull-requests: write
 
         steps:
             - name: Setup Labels to Add and Remove from PR
@@ -91,7 +95,7 @@ jobs:
                   echo "LABELS_TO_REMOVE=$labelsToRemove" >> "$GITHUB_OUTPUT"
             - name: Assign Labels To PR
               uses: RobinJesba/GitHub-Labeler-Action@v0.1.0
-              if: steps.setup-labels.outputs.LABELS_TO_REMOVE != ''
+              # if: steps.setup-labels.outputs.LABELS_TO_REMOVE != ''
               with:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   LABELS_TO_ADD: ${{ steps.setup-labels.outputs.LABELS_TO_ADD }}
