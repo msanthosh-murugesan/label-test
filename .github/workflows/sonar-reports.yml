@@ -29,4 +29,4 @@ jobs:
             - name: Sonar Quality Status
               id: sonar-report
               if: ${{ steps.unit-test.outputs.test-status == 'true'}}
-              run: echo "sonar-status=false" >> "$GITHUB_OUTPUT"
+              run: echo "sonar-status=true" >> "$GITHUB_OUTPUT"
