@@ -8,6 +8,8 @@ on:
 jobs:
     CD:
         runs-on: ubuntu-latest
+        emvironment:
+          name: production
         steps:
           - name: Print CD message
             run: echo "Successful"
