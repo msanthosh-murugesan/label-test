@@ -8,7 +8,7 @@ on:
 jobs:
     CD:
         runs-on: ubuntu-latest
-        emvironment:
+        environment:
           name: production
         steps:
           - name: Print CD message

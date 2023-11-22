@@ -17,7 +17,7 @@ jobs:
             run: echo "$GITHUB_CONTEXT"
             
     quality-gate-check:
-        if: ${{ github.event.label.name != 'sonar-failed' && github.event.label.name != 'test-failed' && github.event.label.name != 'deployment-failed' }}
+        # if: ${{ github.event.label.name != 'sonar-failed' && github.event.label.name != 'test-failed' && github.event.label.name != 'deployment-failed' }}
         uses: ./.github/workflows/sonar-reports.yml
         secrets: inherit
 
@@ -63,40 +63,36 @@ jobs:
               id: deployment
               run: echo "status=true" >> $GITHUB_OUTPUT
 
-    assign-labels:
-        needs: [quality-gate-check, staging-deploy, live-deploy]
-        # if: ${{ always() && github.event.label.name != 'sonar-failed' && github.event.label.name != 'test-failed' && github.event.label.name != 'deployment-failed' }}
-        if: always()
-        runs-on: ubuntu-latest
-        # permissions:
-        #   contents: read
-        #   pull-requests: write
+    # assign-labels:
+    #     needs: [quality-gate-check, staging-deploy, live-deploy]
+    #     if: always()
+    #     runs-on: ubuntu-latest
 
-        steps:
-            - name: Setup Labels to Add and Remove from PR
-              id: setup-labels
-              run: |
-                  if [[ '${{needs.quality-gate-check.outputs.test-status}}' == 'false' ]]; then
-                    labelsToAdd='test-failed'
-                    labelsToRemove='sonar-failed,deployment-failed'
-                  fi
-                  if [[ '${{needs.quality-gate-check.outputs.test-status}}' == 'true' && '${{needs.quality-gate-check.outputs.sonar-status}}' != 'true' ]]; then
-                    labelsToAdd='sonar-failed'
-                    labelsToRemove='test-failed,deployment-failed'
-                  fi
-                  if [[ '${{needs.staging-deploy.outputs.status}}' == 'false' || '${{needs.live-deploy.outputs.status}}' == 'false' ]]; then
-                    labelsToAdd='deployment-failed'
-                    labelsToRemove='test-failed,sonar-failed'
-                  fi
-                  if [[ '${{needs.quality-gate-check.outputs.test-status}}' == 'true' && '${{needs.quality-gate-check.outputs.sonar-status}}' == 'true' && ('${{needs.staging-deploy.outputs.status}}' == 'true' || '${{needs.live-deploy.outputs.status}}' == 'true') ]]; then
-                    labelsToRemove='test-failed,sonar-failed,deployment-failed'
-                  fi
-                  echo "LABELS_TO_ADD=$labelsToAdd" >> "$GITHUB_OUTPUT"
-                  echo "LABELS_TO_REMOVE=$labelsToRemove" >> "$GITHUB_OUTPUT"
-            - name: Assign Labels To PR
-              uses: RobinJesba/GitHub-Labeler-Action@v0.1.0
-              # if: steps.setup-labels.outputs.LABELS_TO_REMOVE != ''
-              with:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  LABELS_TO_ADD: ${{ steps.setup-labels.outputs.LABELS_TO_ADD }}
-                  LABELS_TO_REMOVE: ${{ steps.setup-labels.outputs.LABELS_TO_REMOVE }}
+    #     steps:
+    #         - name: Setup Labels to Add and Remove from PR
+    #           id: setup-labels
+    #           run: |
+    #               if [[ '${{needs.quality-gate-check.outputs.test-status}}' == 'false' ]]; then
+    #                 labelsToAdd='test-failed'
+    #                 labelsToRemove='sonar-failed,deployment-failed'
+    #               fi
+    #               if [[ '${{needs.quality-gate-check.outputs.test-status}}' == 'true' && '${{needs.quality-gate-check.outputs.sonar-status}}' != 'true' ]]; then
+    #                 labelsToAdd='sonar-failed'
+    #                 labelsToRemove='test-failed,deployment-failed'
+    #               fi
+    #               if [[ '${{needs.staging-deploy.outputs.status}}' == 'false' || '${{needs.live-deploy.outputs.status}}' == 'false' ]]; then
+    #                 labelsToAdd='deployment-failed'
+    #                 labelsToRemove='test-failed,sonar-failed'
+    #               fi
+    #               if [[ '${{needs.quality-gate-check.outputs.test-status}}' == 'true' && '${{needs.quality-gate-check.outputs.sonar-status}}' == 'true' && ('${{needs.staging-deploy.outputs.status}}' == 'true' || '${{needs.live-deploy.outputs.status}}' == 'true') ]]; then
+    #                 labelsToRemove='test-failed,sonar-failed,deployment-failed'
+    #               fi
+    #               echo "LABELS_TO_ADD=$labelsToAdd" >> "$GITHUB_OUTPUT"
+    #               echo "LABELS_TO_REMOVE=$labelsToRemove" >> "$GITHUB_OUTPUT"
+    #         - name: Assign Labels To PR
+    #           uses: RobinJesba/GitHub-Labeler-Action@v0.1.0
+    #           if: steps.setup-labels.outputs.LABELS_TO_REMOVE != ''
+    #           with:
+    #               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #               LABELS_TO_ADD: ${{ steps.setup-labels.outputs.LABELS_TO_ADD }}
+    #               LABELS_TO_REMOVE: ${{ steps.setup-labels.outputs.LABELS_TO_REMOVE }}
