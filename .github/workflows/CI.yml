@@ -35,6 +35,8 @@ jobs:
         needs: quality-gate-check
         if: ${{ needs.quality-gate-check.outputs.test-status == 'true' && needs.quality-gate-check.outputs.sonar-status == 'true' && contains(github.event.pull_request.labels.*.name, 'stage') && !contains(github.event.pull_request.labels.*.name, 'live') }}
         runs-on: ubuntu-latest
+        environment:
+          name: staging
         outputs:
             status: ${{steps.deployment.outputs.status}}
         steps:
