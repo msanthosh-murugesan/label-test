@@ -17,7 +17,7 @@ jobs:
             run: echo "$GITHUB_CONTEXT"
             
     quality-gate-check:
-        if: ${{ github.event.label.name != 'sonar-failed' && github.event.label.name != 'test-failed' && github.event.label.name != 'deployment-failed' }}
+        # if: ${{ github.event.label.name != 'sonar-failed' && github.event.label.name != 'test-failed' && github.event.label.name != 'deployment-failed' }}
         uses: ./.github/workflows/sonar-reports.yml
         secrets: inherit
 
@@ -65,7 +65,7 @@ jobs:
 
     assign-labels:
         needs: [quality-gate-check, staging-deploy, live-deploy]
-        if: ${{ always() && github.event.label.name != 'sonar-failed' && github.event.label.name != 'test-failed' && github.event.label.name != 'deployment-failed' }}
+        if: always()
         runs-on: ubuntu-latest
 
         steps:
@@ -93,6 +93,6 @@ jobs:
               uses: RobinJesba/GitHub-Labeler-Action@v0.1.0
               if: steps.setup-labels.outputs.LABELS_TO_REMOVE != ''
               with:
-                  GITHUB_TOKEN: ${{ secrets.LABEL_SECRET }}
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   LABELS_TO_ADD: ${{ steps.setup-labels.outputs.LABELS_TO_ADD }}
                   LABELS_TO_REMOVE: ${{ steps.setup-labels.outputs.LABELS_TO_REMOVE }}
