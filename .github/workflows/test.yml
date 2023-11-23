@@ -29,3 +29,12 @@ jobs:
     steps:
       - name: Deploy Onboarding
         run: echo "Success"
+
+  Deploy-others:
+    needs: CI
+    runs-on: ubuntu-latest
+    name: deploy
+    # if: ${{ needs.CI.outputs.Deploy-Onboarding == 'true' }}
+    steps:
+      - name: Deploy Onboarding
+        run: echo "Success"      
