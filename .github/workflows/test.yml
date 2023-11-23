@@ -24,7 +24,7 @@ jobs:
     needs: CI
     runs-on: ubuntu-latest
     name: deploy
-    if: ${{ needs.CI.outputs.onboarding == 'true' }}
+    if: ${{ needs.CI.outputs.Deploy-Onboarding == 'true' }}
     steps:
       - name: Deploy Onboarding
         run: echo "Success"
