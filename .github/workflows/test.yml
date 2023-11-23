@@ -18,6 +18,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
      
       - name: Deploy Onboarding
+        id: filter
         run: echo "onboarding=true" >> "$GITHUB_OUTPUT"
 
   Deploy-Onboarding:
