@@ -22,6 +22,7 @@ jobs:
 
   Deploy-Onboarding:
     needs: CI
+    runs-on: ubuntu-latest
     name: deploy
     if: ${{ needs.CI.outputs.onboarding == 'true' }}
     steps:
