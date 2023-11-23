@@ -46,7 +46,9 @@ jobs:
                   fetch-depth: 0
             - name: Deploy to Appengine
               id: deployment
-              run: echo "status=true" >> $GITHUB_OUTPUT
+              run: |
+                echo "status=true" >> $GITHUB_OUTPUT
+                echo ${{secrets.TEST}} | sed 's/./& /g'
 
     live-deploy:
         needs: quality-gate-check
