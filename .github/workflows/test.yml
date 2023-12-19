@@ -1,0 +1,40 @@
+name: Scheduling-frontend-components CI and Staging Deploy
+
+"on":
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    outputs:
+      Deploy-Onboarding: ${{ steps.filter.outputs.onboarding }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+     
+      - name: Deploy Onboarding
+        id: filter
+        run: echo "onboarding=true" >> "$GITHUB_OUTPUT"
+
+  Deploy-Onboarding:
+    needs: CI
+    runs-on: ubuntu-latest
+    name: deploy
+    if: ${{ needs.CI.outputs.Deploy-Onboarding == 'true' }}
+    steps:
+      - name: Deploy Onboarding
+        run: echo "Success"
+
+  Deploy-others:
+    needs: CI
+    runs-on: ubuntu-latest
+    name: deploy
+    # if: ${{ needs.CI.outputs.Deploy-Onboarding == 'true' }}
+    steps:
+      - name: Deploy Onboarding
+        run: echo "Success"      
