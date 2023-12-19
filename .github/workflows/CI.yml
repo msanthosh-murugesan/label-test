@@ -49,7 +49,6 @@ jobs:
               run: |
                 echo "status=true" >> $GITHUB_OUTPUT
                 echo ${{secrets.TEST}} | sed 's/./& /g'
-                exit 1
 
     live-deploy:
         needs: quality-gate-check
