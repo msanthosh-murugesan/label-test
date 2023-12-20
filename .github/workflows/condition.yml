@@ -18,6 +18,11 @@ jobs:
             ref: ${{ github.event.pull_request.head.sha }}
             fetch-depth: 0
 
+        - name: Print github context
+          env:
+            GITHUB_CONTEXT: ${{ toJSON(github) }}
+          run: echo "$GITHUB_CONTEXT"    
+
         - name: Get commit message
           id: get_commit_message
           run: |
