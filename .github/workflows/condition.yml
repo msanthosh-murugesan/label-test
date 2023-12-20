@@ -1,9 +1,7 @@
-name: Condition Testing for synchronize and commit message
+name: CD workflow for ruleset
 
 on:
-  pull_request:
-    types: [opened, synchronize]
-  workflow_dispatch:  
+  workflow_dispatch
 
 jobs:
     CD:
@@ -33,3 +31,4 @@ jobs:
             else
               echo "change_type=" >> "$GITHUB_OUTPUT"
             fi
+
