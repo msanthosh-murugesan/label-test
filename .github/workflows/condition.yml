@@ -1,45 +1,34 @@
 name: CD workflow for ruleset
 
 on:
-  workflow_dispatch
+  pull_request:
+    types: [opened, synchronize]
+  push:
 
 jobs:
-  job1:
-    runs-on: ubuntu-latest
-    outputs:
-      output1: ${{ steps.version_id.outputs.version }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    CD:
+      runs-on: ubuntu-latest
+      environment: staging
+      steps:
+        - name: checkout
+          uses: actions/checkout@v2
 
-      - name: Expose github environment as shell variables
-        env:
-          SECRETS_CONTEXT: ${{ toJson(secrets) }}
-          VARS_CONTEXT: ${{ toJson(vars) }}
-        run: |
-          to_envs() { jq -rR "fromjson? | to_entries[] | select(length > 0) | \"\(.key)=\(.value)\""; }
-          echo "$SECRETS_CONTEXT" | tr -d '\n' | to_envs >> $GITHUB_ENV
-          echo "$VARS_CONTEXT" | tr -d '\n' | to_envs >> $GITHUB_ENV
+        - name: Get commit message
+          id: get_commit_message
+          run: echo "message=$(git log --format=%B -n 2 ${{ github.sha }} | tail -1)" >> "$GITHUB_OUTPUT"
 
-      - name: Get commit message
-        id: get_commit_message
-        run: echo "message=$(git log --format=%B -n 2 ${{ github.sha }} | tail -1)" >> "$GITHUB_OUTPUT"
+        - name: Extract version type(major or minor or patch)
+          id: extract_version_type
+          run: |
+            COMMIT_MESSAGE="${{ steps.get_commit_message.outputs.message }}"
+            
+            if [[ $COMMIT_MESSAGE =~ ^(major|Major) ]]; then
+              echo "change_type=major" >> "$GITHUB_OUTPUT"
+            elif [[ $COMMIT_MESSAGE =~ ^(minor|Minor) ]]; then
+              echo "change_type=minor" >> "$GITHUB_OUTPUT"
+            elif [[ $COMMIT_MESSAGE =~ ^(patch|Patch) ]]; then
+              echo "change_type=patch" >> "$GITHUB_OUTPUT"
+            else
+              echo "change_type=" >> "$GITHUB_OUTPUT"
+            fi
 
-      - name: Extract version type(major or minor or patch)
-        id: extract_version_type
-        run: |
-          COMMIT_MESSAGE="${{ steps.get_commit_message.outputs.message }}"
-          
-          if [[ $COMMIT_MESSAGE =~ ^(major|Major) ]]; then
-            echo "change_type=major" >> "$GITHUB_OUTPUT"
-          elif [[ $COMMIT_MESSAGE =~ ^(minor|Minor) ]]; then
-            echo "change_type=minor" >> "$GITHUB_OUTPUT"
-          elif [[ $COMMIT_MESSAGE =~ ^(patch|Patch) ]]; then
-            echo "change_type=patch" >> "$GITHUB_OUTPUT"
-          else
-            echo "change_type=" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Print version type
-        id: version_id
-        run: echo "version=${{ steps.extract_version_type.outputs.change_type }}" >> "$GITHUB_OUTPUT"
