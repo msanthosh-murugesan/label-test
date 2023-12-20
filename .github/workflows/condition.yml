@@ -9,26 +9,26 @@ permissions:
   pull-requests: write  
 
 jobs:
-    CD:
-      runs-on: ubuntu-latest
-      environment: staging
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v3
+  CD:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-        - name: Extract commit SHA
-          id: sha
-          run: echo "Commit_SHA=${{ github.event.pull_request.head.sha }}"
+      - name: Extract commit SHA
+        id: sha
+        run: echo "Commit_SHA=${{ github.event.pull_request.head.sha }}"
 
-        - name: Get commit message
-          id: get-commit-message
-          run: |
-            echo "Pull request commit message:"
-            echo "message=$(git log --format=%B -n 2 ${{ steps.sha.outputs.Commit_SHA }} | tail -1)" >> "$GITHUB_OUTPUT"
+      - name: Get commit message
+        id: get-commit-message
+        run: |
+          echo "Pull request commit message:"
+          COMMIT_MESSAGE=$(git log --format=%B -n 2 ${{ steps.sha.outputs.Commit_SHA }} | tail -1)
+          echo "message=$COMMIT_MESSAGE" >> $GITHUB_ENV
 
-        - name: Use the commit message
-          run: |
-            echo "The commit message is: ${{ steps.get-commit-message.outputs.message }}"
-          env:
-            COMMIT_MESSAGE: ${{ steps.get-commit-message.outputs.message }}
-
+      - name: Use the commit message
+        run: |
+          echo "The commit message is: ${{ env.message }}"
+        env:
+          message: ${{ steps.get-commit-message.outputs.message }}
