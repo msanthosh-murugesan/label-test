@@ -25,7 +25,6 @@ jobs:
         - name: Use the commit message
           run: |
             echo "The commit message is: ${{ steps.get-commit-message.outputs.message }}"
-
-            env:
-              COMMIT_MESSAGE: ${{ steps.get-commit-message.outputs.message }}
+          env:
+            COMMIT_MESSAGE: ${{ steps.get-commit-message.outputs.message }}
 
