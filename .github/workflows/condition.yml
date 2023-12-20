@@ -30,7 +30,21 @@ jobs:
           echo "message=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
 
       - name: Use the commit message
+        id: commit-msg
+        run: |
+          echo "commit_string=${{ env.message }}" >> $GITHUB_OUTPUT
+        env:
+          message: ${{ steps.get-commit-message.outputs.message }}
+
+      - name: Print github context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"    
+
+      - name: Use the commit message in condition
+        if: ${{ github.event_name == 'pull_request' && (github.event.action == 'synchronize') && github.event.pull_request.base.ref == 'main' }}
         run: |
           echo "The commit message is: ${{ env.message }}"
         env:
-          message: ${{ steps.get-commit-message.outputs.message }}
+          message: ${{ steps.get-commit-message.outputs.message }}    
+
