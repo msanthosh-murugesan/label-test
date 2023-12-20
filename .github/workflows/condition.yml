@@ -8,6 +8,8 @@ on:
 jobs:
     CD:
       runs-on: ubuntu-latest
+      env:
+        commitmsg: ${{ github.event.head_commit.message }}
       environment: staging
       steps:
         - name: checkout
@@ -18,7 +20,9 @@ jobs:
 
         - name: Get commit message
           id: get_commit_message
-          run: echo "message=$(git log --format=%B -n 2 ${{ github.sha }} | tail -1)" >> "$GITHUB_OUTPUT"
+          run: |
+            echo commitmsg = ${{ env.commitmsg }}
+            echo "message=$(git log --format=%B -n 2 ${{ github.sha }} | tail -1)" >> "$GITHUB_OUTPUT"
 
         - name: Extract version type(major or minor or patch)
           id: extract_version_type
