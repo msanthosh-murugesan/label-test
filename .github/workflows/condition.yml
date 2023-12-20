@@ -18,5 +18,5 @@ jobs:
           run: echo "commit_msg=$(git log --format=%B -n 2 ${{ github.sha }} | tail -1)" >> "$GITHUB_OUTPUT"
 
         - name: Test condition
-          if: ${{ github.event_name == 'pull_request' && (github.event.action == 'synchronize') && github.event.pull_request.base.ref == 'main' }}
+          if: ${{ github.event_name == 'pull_request' && (github.event.action == 'synchronize') && github.event.pull_request.base.ref == 'master' }}
           run: COMMIT_MESSAGE="${{ steps.commit.outputs.commit_msg }}"  
