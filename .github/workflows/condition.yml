@@ -43,10 +43,3 @@ jobs:
       - name: Print version type
         id: version_id
         run: echo "version=${{ steps.extract_version_type.outputs.change_type }}" >> "$GITHUB_OUTPUT"
-
-  job2:
-    needs: job1
-    uses: msanthosh-murugesan/ruleset/.github/workflows/workflowcall.yml@main
-    with:
-      bump-type: ${{needs.job1.outputs.output1}}
-      actor: 'santhosh'
