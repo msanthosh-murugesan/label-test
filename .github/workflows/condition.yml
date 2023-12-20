@@ -20,14 +20,14 @@ jobs:
 
       - name: Extract commit SHA
         id: sha
-        run: echo "Commit_SHA=${{ github.event.pull_request.head.sha }}"
+        run: echo "Commit_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
 
       - name: Get commit message
         id: get-commit-message
         run: |
           echo "Pull request commit message:"
           COMMIT_MESSAGE=$(git log --format=%B -n 2 ${{ steps.sha.outputs.Commit_SHA }} | tail -1)
-          echo "message=$COMMIT_MESSAGE" >> $GITHUB_ENV
+          echo "message=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
 
       - name: Use the commit message
         run: |
