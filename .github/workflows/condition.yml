@@ -12,47 +12,22 @@ jobs:
         commitmsg: ${{ github.event.head_commit.message }}
       environment: staging
       steps:
-        - name: checkout
-          uses: actions/checkout@v2
-          with:
-            ref: ${{ github.event.pull_request.head.sha }}
-            fetch-depth: 0
+        - name: Checkout repository
+          uses: actions/checkout@v3
 
-        - name: Print github context
-          env:
-            GITHUB_CONTEXT: ${{ toJSON(github) }}
-          run: echo "$GITHUB_CONTEXT"    
+        - name: Extract commit SHA
+          run: echo "Commit SHA: ${{ github.event.pull_request.head.sha }}"
 
         - name: Get commit message
-          id: get_commit_message
+          id: get-commit-message
           run: |
-            echo commitmsg = ${{ env.commitmsg }}
-            echo "message=$(git log --format=%B -n 2 ${{ github.sha }} | tail -1)" >> "$GITHUB_OUTPUT"
+            echo "Pull request commit message:"
+            echo "message=$(git log --pretty=%B -1 ${{ github.event.pull_request.head.sha }})" >> "$GITHUB_OUTPUT"
 
-        - name: Extract version type(major or minor or patch)
-          id: extract_version_type
+        - name: Use the commit message
           run: |
-            COMMIT_MESSAGE="${{ steps.get_commit_message.outputs.message }}"
-            
-            if [[ $COMMIT_MESSAGE =~ ^(major|Major) ]]; then
-              echo "change_type=major" >> "$GITHUB_OUTPUT"
-            elif [[ $COMMIT_MESSAGE =~ ^(minor|Minor) ]]; then
-              echo "change_type=minor" >> "$GITHUB_OUTPUT"
-            elif [[ $COMMIT_MESSAGE =~ ^(patch|Patch) ]]; then
-              echo "change_type=patch" >> "$GITHUB_OUTPUT"
-            else
-              echo "change_type=" >> "$GITHUB_OUTPUT"
-            fi
+            echo "The commit message is: ${{ steps.get-commit-message.outputs.message }}"
 
-        - name: Get PR head commit
-          if: github.event_name == 'pull_request'
-          id: get_pr_commit
-          run: echo "commit_sha=$(jq -r '.pull_request.head.sha' $GITHUB_EVENT_PATH)" >> "$GITHUB_OUTPUT"
-
-        - name: Get commit message for PR
-          if: github.event_name == 'pull_request'
-          id: get_pr_commit_message
-          run: |
-            COMMIT_MESSAGE=$(git log --format=%B -n 2 ${{ steps.get_pr_commit.outputs.commit_sha }} | tail -1)
-            echo "message=$COMMIT_MESSAGE"   
+            env:
+              COMMIT_MESSAGE: ${{ steps.get-commit-message.outputs.message }}
 
