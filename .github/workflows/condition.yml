@@ -42,9 +42,15 @@ jobs:
         run: echo "$GITHUB_CONTEXT"    
 
       - name: Use the commit message in condition
-        if: ${{ github.event_name == 'pull_request' && (github.event.action == 'synchronize') && github.event.pull_request.base.ref == 'main' && (steps.commit-msg.outputs.commit_string == 'Merge branch *') }}
+        if: ${{ (steps.commit-msg.outputs.commit_string == 'Merge branch *') }}
         run: |
-          echo "The commit message is: ${{ env.message }}"
+          string="${{ steps.get-commit-message.outputs.message }} "
+          if [[ "$string" =~ ^Merge\ branch\ (.*) ]]; then
+            echo "The commit message is: ${{ env.message }}"
+          else
+            echo "Invalid format: doesn't start with 'Merge branch'"
+          fi
+          
         env:
           message: ${{ steps.get-commit-message.outputs.message }}    
 
