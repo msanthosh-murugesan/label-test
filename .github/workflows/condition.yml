@@ -7,8 +7,6 @@ on:
 jobs:
     CD:
       runs-on: ubuntu-latest
-      environment:
-        name: production
       steps:
         - name: checkout
           uses: actions/checkout@v2
@@ -20,4 +18,4 @@ jobs:
 
         - name: Test condition
           if: ${{ github.event_name == 'pull_request' && (github.event.action == 'synchronize') && github.event.pull_request.base.ref == 'main' }}
-          run: "${{ steps.commit.outputs.commit_msg }}"  
+          run: echo "${{ steps.commit.outputs.commit_msg }}"  
