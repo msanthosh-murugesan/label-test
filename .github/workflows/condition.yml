@@ -3,6 +3,7 @@ name: Condition Testing for synchronize and commit message
 on:
   pull_request:
     types: [opened, synchronize]
+  workflow_dispatch:  
 
 jobs:
     CD:
