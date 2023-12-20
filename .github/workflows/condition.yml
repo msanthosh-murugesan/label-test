@@ -36,8 +36,13 @@ jobs:
         env:
           message: ${{ steps.get-commit-message.outputs.message }}
 
+      - name: Print github context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"    
+
       - name: Use the commit message in condition
-        if: ${{ github.event_name == 'pull_request' && (github.event.action == 'synchronize') && github.event.pull_request.base.ref == 'main' && steps.commit-msg.outputs.commit_string == 'Merge branch *' }}
+        if: ${{ github.event_name == 'pull_request' && (github.event.action == 'synchronize') && github.event.pull_request.base.ref == 'main' }}
         run: |
           echo "The commit message is: ${{ env.message }}"
         env:
