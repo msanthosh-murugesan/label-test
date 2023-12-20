@@ -8,8 +8,6 @@ on:
 jobs:
     CD:
       runs-on: ubuntu-latest
-      env:
-        commitmsg: ${{ github.event.head_commit.message }}
       environment: staging
       steps:
         - name: Checkout repository
