@@ -42,7 +42,7 @@ jobs:
         run: echo "$GITHUB_CONTEXT"    
 
       - name: Use the commit message in condition
-        if: ${{ (steps.commit-msg.outputs.commit_string == 'Merge branch *') }}
+        if: ${{ github.event_name == 'pull_request' && (github.event.action == 'synchronize') && github.event.pull_request.base.ref == 'main' }}
         run: |
           string="${{ steps.get-commit-message.outputs.message }} "
           if [[ "$string" =~ ^Merge\ branch\ (.*) ]]; then
