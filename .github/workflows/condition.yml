@@ -17,7 +17,7 @@ jobs:
           id: commit
           run: |
             echo "commit_msg=(git log --format=%B -n 1 ${{ github.sha }})" >> $GITHUB_OUTPUT
-            echo "$commit_msg"
+            echo $commit_msg
 
         - name: Test condition
           if: ${{ github.event_name == 'pull_request' && (github.event.action == 'synchronize') && github.event.pull_request.base.ref == 'main' }}
