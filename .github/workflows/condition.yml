@@ -16,7 +16,7 @@ jobs:
         - name: get commit message
           id: commit
           run: |
-            echo "commit_msg=(git log --format=%B -n 1 ${{ github.sha }})" >> $GITHUB_OUTPUT
+            echo "commit_msg=(git log --format=%B -n 1 ${{ github.sha }})"
             echo $commit_msg
 
         - name: Test condition
