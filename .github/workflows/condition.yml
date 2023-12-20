@@ -3,7 +3,7 @@ name: Condition Testing for synchronize and commit message
 on:
   pull_request:
     types: [opened, synchronize]
-  workflow_dispatch:  
+  push:
 
 jobs:
     CD:
@@ -12,8 +12,6 @@ jobs:
       steps:
         - name: checkout
           uses: actions/checkout@v2
-          with:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         - name: Get commit message
           id: get_commit_message
