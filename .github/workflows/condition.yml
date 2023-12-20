@@ -24,7 +24,7 @@ jobs:
           id: get-commit-message
           run: |
             echo "Pull request commit message:"
-            echo "message=$(git log --format=%B -n 1 ${{ steps.sha.outputs.Commit_SHA }})" >> "$GITHUB_OUTPUT"
+            echo "message=$(git log --format=%B -n 2 ${{ steps.sha.outputs.Commit_SHA }} | tail -1)" >> "$GITHUB_OUTPUT"
 
         - name: Use the commit message
           run: |
