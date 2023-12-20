@@ -15,10 +15,21 @@ jobs:
           with:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-        - name: get commit message
-          id: commit
-          run: echo "commit_msg=$(git log --format=%B -n 2 )"
+        - name: Get commit message
+          id: get_commit_message
+          run: echo "message=$(git log --format=%B -n 2 ${{ github.sha }} | tail -1)" >> "$GITHUB_OUTPUT"
 
-        # - name: Test condition
-        #   if: ${{ github.event_name == 'pull_request' && (github.event.action == 'synchronize') && github.event.pull_request.base.ref == 'main' }}
-        #   run: COMMIT_MESSAGE="${{ steps.commit.outputs.commit_msg }}"  
+        - name: Extract version type(major or minor or patch)
+          id: extract_version_type
+          run: |
+            COMMIT_MESSAGE="${{ steps.get_commit_message.outputs.message }}"
+            
+            if [[ $COMMIT_MESSAGE =~ ^(major|Major) ]]; then
+              echo "change_type=major" >> "$GITHUB_OUTPUT"
+            elif [[ $COMMIT_MESSAGE =~ ^(minor|Minor) ]]; then
+              echo "change_type=minor" >> "$GITHUB_OUTPUT"
+            elif [[ $COMMIT_MESSAGE =~ ^(patch|Patch) ]]; then
+              echo "change_type=patch" >> "$GITHUB_OUTPUT"
+            else
+              echo "change_type=" >> "$GITHUB_OUTPUT"
+            fi
