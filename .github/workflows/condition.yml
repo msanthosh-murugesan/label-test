@@ -32,3 +32,15 @@ jobs:
               echo "change_type=" >> "$GITHUB_OUTPUT"
             fi
 
+        - name: Get PR head commit
+          if: github.event_name == 'pull_request'
+          id: get_pr_commit
+          run: echo "commit_sha=$(jq -r '.pull_request.head.sha' $GITHUB_EVENT_PATH)" >> "$GITHUB_OUTPUT"
+
+        - name: Get commit message for PR
+          if: github.event_name == 'pull_request'
+          id: get_pr_commit_message
+          run: |
+            COMMIT_MESSAGE=$(git log --format=%B -n 2 ${{ steps.get_pr_commit.outputs.commit_sha }} | tail -1)
+            echo "message=$COMMIT_MESSAGE"   
+
