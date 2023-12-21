@@ -19,7 +19,9 @@ jobs:
 
       - name: Get commit message
         id: get-commit-message
-        run: echo "message=$(git log --pretty=%B -1)" >> $GITHUB_OUTPUT
+        run: |
+          git log --pretty=%B -1
+          echo "message=$(git log --pretty=%B -1)" >> $GITHUB_OUTPUT
 
       - name: Print github context
         env:
