@@ -1,4 +1,4 @@
-name: CD workflow for rulesets
+name: CD workflow for ruleset
 
 on:
   pull_request:
