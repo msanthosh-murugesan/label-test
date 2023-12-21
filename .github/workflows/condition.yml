@@ -3,7 +3,6 @@ name: CD workflow for ruleset
 on:
   pull_request:
     types: [opened, synchronize]
-  push:
 
 permissions:
   pull-requests: write  
