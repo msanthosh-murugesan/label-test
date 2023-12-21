@@ -51,6 +51,18 @@ jobs:
       - name: Get Head Commit Message
         id: get_head_commit_message
         run: |
+          git show -s --format=%s
           echo "HEAD_COMMIT_MESSAGE=$(git show -s --format=%s)" >> "$GITHUB_OUTPUT"
-          echo "$HEAD_COMMIT_MESSAGE"        
+          echo "$HEAD_COMMIT_MESSAGE" 
+
+      - name: Use the commit message in condition
+        run: |
+          string="${{ steps.get_head_commit_message.outputs.HEAD_COMMIT_MESSAGE }}"
+          if [[ "$string" =~ ^Merge\ branch\ (.*) ]]; then
+            echo "The commit message is: ${{ env.message }}"
+          else
+            echo "Invalid format: doesn't start with 'Merge branch'"
+          fi
+        env:
+          message: ${{ steps.get_head_commit_message.outputs.HEAD_COMMIT_MESSAGE }}              
 
