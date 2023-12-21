@@ -14,16 +14,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        # with:
-        #   ref: ${{ github.event.pull_request.head.ref }}
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Get commit message
         id: get-commit-message
-        run: |
-          git log --all --pretty=%B 
-          git show -s --format=%s
-          COMMIT_MESSAGE=$(git log --pretty=%B -1)
-          echo "message=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
+        run: echo "message=$(git log --pretty=%B -1)" >> $GITHUB_OUTPUT
 
       - name: Print github context
         env:
@@ -37,7 +33,7 @@ jobs:
           if [[ "$string" =~ ^Merge\ branch\ (.*) ]]; then
             echo "The commit message is: ${{ env.message }}"
           else
-            echo "Invalid format: doesn't start with 'Merge branch'"
+            echo "Invalid format: doesn't start with 'Merge branch' ${{ env.message }}"
           fi
         env:
           message: ${{ steps.get-commit-message.outputs.message }}    
