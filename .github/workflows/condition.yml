@@ -1,4 +1,4 @@
-name: CD workflow for ruleset
+name: CD workflow for rulesets
 
 on:
   pull_request:
@@ -14,26 +14,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        # with:
-        #   ref: ${{ github.event.pull_request.head.ref }}
-
-      - name: Extract commit SHA
-        id: sha
-        run: echo "Commit_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Get commit message
         id: get-commit-message
-        run: |
-          echo "Pull request commit message:"
-          COMMIT_MESSAGE=$(git log --pretty=%B -1 ${{ steps.sha.outputs.Commit_SHA }} | tail -1)
-          echo "message=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
-
-      - name: Use the commit message
-        id: commit-msg
-        run: |
-          echo "commit_string=${{ env.message }}" >> $GITHUB_OUTPUT
-        env:
-          message: ${{ steps.get-commit-message.outputs.message }}
+        run: echo "message=$(git log --pretty=%B -1)" >> $GITHUB_OUTPUT
 
       - name: Print github context
         env:
@@ -47,9 +33,34 @@ jobs:
           if [[ "$string" =~ ^Merge\ branch\ (.*) ]]; then
             echo "The commit message is: ${{ env.message }}"
           else
-            echo "Invalid format: doesn't start with 'Merge branch'"
+            echo "Invalid format: doesn't start with 'Merge branch' ${{ env.message }}"
           fi
-          
         env:
           message: ${{ steps.get-commit-message.outputs.message }}    
+
+
+  second:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Get Head Commit Message
+        id: get_head_commit_message
+        run: |
+          git show -s --format=%s
+          echo "HEAD_COMMIT_MESSAGE=$(git show -s --format=%s)" >> "$GITHUB_OUTPUT"
+          echo "$HEAD_COMMIT_MESSAGE" 
+
+      - name: Use the commit message in condition
+        run: |
+          string="${{ steps.get_head_commit_message.outputs.HEAD_COMMIT_MESSAGE }}"
+          if [[ "$string" =~ ^Merge\ branch\ (.*) ]]; then
+            echo "The commit message is: ${{ env.message }}"
+          else
+            echo "Invalid format: doesn't start with 'Merge branch'"
+          fi
+        env:
+          message: ${{ steps.get_head_commit_message.outputs.HEAD_COMMIT_MESSAGE }}              
 
