@@ -50,5 +50,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Get Head Commit Message
         id: get_head_commit_message
-        run: echo "HEAD_COMMIT_MESSAGE=$(git show -s --format=%s)" >> "$GITHUB_OUTPUT"        
+        run: |
+          echo "HEAD_COMMIT_MESSAGE=$(git show -s --format=%s)" >> "$GITHUB_OUTPUT"
+          echo "$HEAD_COMMIT_MESSAGE"        
 
