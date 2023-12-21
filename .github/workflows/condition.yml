@@ -18,23 +18,11 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Extract commit SHA
-        id: sha
-        run: echo "Commit_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
-
       - name: Get commit message
         id: get-commit-message
         run: |
-          echo "Pull request commit message:"
-          COMMIT_MESSAGE=$(git log --pretty=%B -1 ${{ steps.sha.outputs.Commit_SHA }} | tail -1)
+          COMMIT_MESSAGE=$(git log --pretty=%B -1 ${{ github.event.pull_request.head.sha }} | tail -1)
           echo "message=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
-
-      - name: Use the commit message
-        id: commit-msg
-        run: |
-          echo "commit_string=${{ env.message }}" >> $GITHUB_OUTPUT
-        env:
-          message: ${{ steps.get-commit-message.outputs.message }}
 
       - name: Print github context
         env:
@@ -50,7 +38,6 @@ jobs:
           else
             echo "Invalid format: doesn't start with 'Merge branch'"
           fi
-          
         env:
           message: ${{ steps.get-commit-message.outputs.message }}    
 
