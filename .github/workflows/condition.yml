@@ -14,13 +14,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
+        # with:
+        #   ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Get commit message
         id: get-commit-message
         run: |
-          git log --pretty=%B -1 ${{ github.event.pull_request.head.sha }} | tail -1
+          git log --pretty=%B -1 ${{ github.event.pull_request.head.sha }}
           COMMIT_MESSAGE=$(git log --pretty=%B -1 ${{ github.event.pull_request.head.sha }} | tail -1)
           echo "message=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
 
