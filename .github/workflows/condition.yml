@@ -20,6 +20,7 @@ jobs:
       - name: Get commit message
         id: get-commit-message
         run: |
+          git log --pretty=%B -1 ${{ github.event.pull_request.head.sha }}
           COMMIT_MESSAGE=$(git log --pretty=%B -1 ${{ github.event.pull_request.head.sha }} | tail -1)
           echo "message=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
 
