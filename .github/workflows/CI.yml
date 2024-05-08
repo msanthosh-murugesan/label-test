@@ -23,7 +23,7 @@ jobs:
 
     test:
         runs-on: ubuntu-latest
-        if: ${{ github.event.pull_request.base.ref == 'main' && github.event.action.labeled && contains(github.event.pull_request.labels.*.name, 'deploy:staging') }}
+        if: github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'deploy:staging')
         steps:
             - name: Print
               run: echo "Hello"  
