@@ -27,6 +27,13 @@ jobs:
         steps:
             - name: Print
               run: echo "Hello"  
+
+    filetest:
+        runs-on: ubuntu-latest
+        if: ${{ contains(github.event.pull_request.files.*.filename, 'app/*') }}
+        steps:
+            - name: Print
+              run: echo "Hello"               
             
 
     org-checks:
