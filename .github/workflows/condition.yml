@@ -1,0 +1,66 @@
+name: CD workflow for ruleset
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write  
+
+jobs:
+  CD:
+    runs-on: ubuntu-latest
+    # environment: staging
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Get commit message
+        id: get-commit-message
+        run: echo "message=$(git log --pretty=%B -1)" >> $GITHUB_OUTPUT
+
+      - name: Print github context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"    
+
+      - name: Use the commit message in condition
+        if: ${{ github.event_name == 'pull_request' && (github.event.action == 'synchronize') && github.event.pull_request.base.ref == 'main' }}
+        run: |
+          string="${{ steps.get-commit-message.outputs.message }} "
+          if [[ "$string" =~ ^Merge\ branch\ (.*) ]]; then
+            echo "The commit message is: ${{ env.message }}"
+          else
+            echo "Invalid format: doesn't start with 'Merge branch' ${{ env.message }}"
+          fi
+        env:
+          message: ${{ steps.get-commit-message.outputs.message }}    
+
+
+  second:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Get Head Commit Message
+        id: get_head_commit_message
+        run: |
+          git show -s --format=%s
+          echo "HEAD_COMMIT_MESSAGE=$(git show -s --format=%s)" >> "$GITHUB_OUTPUT"
+          echo "$HEAD_COMMIT_MESSAGE" 
+
+      - name: Use the commit message in condition
+        run: |
+          string="${{ steps.get_head_commit_message.outputs.HEAD_COMMIT_MESSAGE }}"
+          if [[ "$string" =~ ^Merge\ branch\ (.*) ]]; then
+            echo "The commit message is: ${{ env.message }}"
+          else
+            echo "Invalid format: doesn't start with 'Merge branch'"
+          fi
+        env:
+          message: ${{ steps.get_head_commit_message.outputs.HEAD_COMMIT_MESSAGE }}              
+

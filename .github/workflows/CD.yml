@@ -1,0 +1,15 @@
+name: CD
+
+on:
+    pull_request:
+        branches: [main]
+        types: [closed]
+
+jobs:
+    CD:
+        runs-on: ubuntu-latest
+        environment:
+          name: production
+        steps:
+          - name: Print CD message
+            run: echo "Successful"
