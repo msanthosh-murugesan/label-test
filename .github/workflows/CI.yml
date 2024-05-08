@@ -30,7 +30,7 @@ jobs:
 
     filetest:
         runs-on: ubuntu-latest
-        if: ${{ github.event.pull_request.files.any(file => file.startsWith('app/')) }}
+        if: ${{ github.event.pull_request.files.*.filename contains 'app/' }}
         steps:
             - name: Print
               run: echo "Hello"               
