@@ -12,6 +12,14 @@ jobs:
         uses: ./.github/workflows/sonar-reports.yml
         secrets: inherit
 
+    test:
+        runs-on: ubuntu-latest
+        if: ${{ github.event.pull_request.base.ref == 'master' && github.event.action.labeled && contains(github.event.pull_request.labels.*.name, 'deploy:staging') }}
+        steps:
+            - name: Print
+              run: echo "Hello"  
+            
+
     staging-deploy:
         needs: quality-gate-check
         if: ${{ needs.quality-gate-check.outputs.test-status == 'true' && needs.quality-gate-check.outputs.sonar-status == 'true' && contains(github.event.pull_request.labels.*.name, 'stage') && !contains(github.event.pull_request.labels.*.name, 'live') }}
