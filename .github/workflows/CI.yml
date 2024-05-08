@@ -30,7 +30,7 @@ jobs:
 
     filetest:
         runs-on: ubuntu-latest
-        if: ${{ contains(github.event.pull_request.files.*.filename, 'app/*') }}
+        if: ${{ contains(github.event.pull_request.files.*.filename, 'app/') }}
         steps:
             - name: Print
               run: echo "Hello"               
