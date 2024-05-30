@@ -24,4 +24,19 @@ jobs:
                   fetch-depth: 0
             - name: Deploy to Appengine
               id: deployment
-              run: echo "status=true" >> $GITHUB_OUTPUT
+              run: |
+                  echo "status=true" >> $GITHUB_OUTPUT
+                  exit 1;
+
+    deploy:
+        needs: [ org-checks, staging-deploy ]
+        if: ${{ always() && !contains(needs.staging-deploy.result, 'failure') }}
+        runs-on: ubuntu-latest
+        steps:
+            - name: Setup checkout
+              uses: actions/checkout@v3.3.0
+              with:
+                  fetch-depth: 0
+            - name: Deploy to Appengine
+              id: deployment
+              run: echo "status=true" >> $GITHUB_OUTPUT          
