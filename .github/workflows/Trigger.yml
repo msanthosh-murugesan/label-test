@@ -1,0 +1,26 @@
+name: CI - Trigger testing
+
+on:
+    pull_request:
+        branches: [main]
+        types: [opened, reopened, synchronize, labeled]
+
+jobs:
+    org-checks: 
+         runs-on: ubuntu-latest
+         steps:
+            - name: Setup checkout
+              uses: actions/checkout@v3.3.0
+            - name: Testing org-checks
+              run: echo "Org checks success"    
+
+    staging-deploy:
+        needs: [ org-checks ]
+        steps:
+            - name: Setup checkout
+              uses: actions/checkout@v3.3.0
+              with:
+                  fetch-depth: 0
+            - name: Deploy to Appengine
+              id: deployment
+              run: echo "status=true" >> $GITHUB_OUTPUT
