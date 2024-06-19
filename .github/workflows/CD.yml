@@ -13,3 +13,13 @@ jobs:
         steps:
           - name: Print CD message
             run: echo "Successful"
+
+    CD-test:
+        if: github.event.pull_request.merged == 'true'
+        needs: [CD]
+        runs-on: ubuntu-latest
+        environment:
+          name: production
+        steps:
+          - name: Print CD message
+            run: echo "Successful"         
