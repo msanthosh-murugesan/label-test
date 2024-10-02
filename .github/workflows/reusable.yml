@@ -18,11 +18,11 @@ jobs:
         token: ${{ secrets.REUSABLE_TOKEN }}
     - name: Printing Github workspace
       run: echo "$GITHUB_WORKSPACE"
+    - run: cd app  
     - name: Use Node.js
       uses: actions/setup-node@v3
       with:
         node-version: 16
         cache: 'npm'
     - run: npm i
-    - run: cd frontend
-    - run: npm i
+    - run: npm run test
