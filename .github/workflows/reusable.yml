@@ -16,6 +16,7 @@ jobs:
       with:
         repository: msanthosh-murugesan/label-test
         token: ${{ secrets.REUSABLE_TOKEN }}
+        path: app
     - name: Printing Github workspace
       run: echo "$GITHUB_WORKSPACE"
     - run: cd app  
