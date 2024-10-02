@@ -1,0 +1,18 @@
+name: Dispatch workflow
+
+on:
+  workflow_dispatch
+
+jobs:
+  test-workflow:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - run: cd app    
+    - run: npm i
+    - run: npm run test
