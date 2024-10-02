@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" "
+    "test": "echo \"Error: no test specified and it is success for Santhosh\" "
   },
   "author": "",
   "license": "ISC"
