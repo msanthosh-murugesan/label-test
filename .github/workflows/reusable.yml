@@ -1,0 +1,28 @@
+name: Reusable workflow
+
+on:
+  workflow_call:
+    secrets:
+      REUSABLE_TOKEN:
+        required: false
+        description: Login Password
+
+jobs:
+  test-workflow:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      with:
+        repository: msanthosh-murugesan/label-test
+        token: ${{ secrets.REUSABLE_TOKEN }}
+    - name: Printing Github workspace
+      run: echo "$GITHUB_WORKSPACE"
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+    - run: npm i
+    - run: cd frontend
+    - run: npm i
