@@ -21,8 +21,6 @@ jobs:
       with:
         node-version: 16
     - run: |
-        cd app   
-        npm i
-        npm run test 
+        cd app  
     - run: npm i
     - run: npm run test
