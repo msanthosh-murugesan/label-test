@@ -16,11 +16,10 @@ jobs:
       with:
         repository: msanthosh-murugesan/label-test
         token: ${{ secrets.REUSABLE_TOKEN }}
-    - name: Printing Github workspace
-      run: echo "$GITHUB_WORKSPACE"
     - name: Use Node.js
       uses: actions/setup-node@v3
       with:
         node-version: 16
+    - run: cd app    
     - run: npm i
     - run: npm run test
