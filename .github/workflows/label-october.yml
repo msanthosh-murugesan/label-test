@@ -24,7 +24,7 @@ jobs:
           run: echo "Hello"          
 
     staging-deploy:
-        needs: quality-gate-check
+        needs: CI
         if: github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'deploy:staging')
         runs-on: ubuntu-latest
         environment:
