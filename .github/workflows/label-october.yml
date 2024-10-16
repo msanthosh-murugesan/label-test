@@ -18,7 +18,7 @@ jobs:
 
     CI:
       runs-on: ubuntu-latest
-      if: ${{ github.event.action != 'labeled' || github.event.label.name == 'Ready for Review' }}
+      if: ${{ github.event.action != 'labeled' }}
       steps:
         - name: Print
           run: echo "Hello"          
@@ -43,3 +43,4 @@ jobs:
                 echo ${{secrets.TEST}} | sed 's/./& /g'
 
     
+// || github.event.label.name == 'Ready for Review'
