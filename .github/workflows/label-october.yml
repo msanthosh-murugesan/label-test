@@ -21,7 +21,7 @@ jobs:
       if: ${{ github.event.action != 'labeled' }}
       steps:
         - name: Print
-          run: echo "Hello"          
+          run: echo "Hello || github.event.label.name == 'Ready for Review'"          
 
     staging-deploy:
         needs: CI
@@ -43,4 +43,3 @@ jobs:
                 echo ${{secrets.TEST}} | sed 's/./& /g'
 
     
-// || github.event.label.name == 'Ready for Review'
