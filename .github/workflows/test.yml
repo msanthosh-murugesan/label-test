@@ -1,9 +1,7 @@
 name: Scheduling-frontend-components CI and Staging Deploy
 
 "on":
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch
 
 jobs:
   CI:
