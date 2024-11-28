@@ -24,13 +24,7 @@ jobs:
           run: |
               echo "Sandbox"    
 
-              IMAGE_NAME="us-central1-docker.pkg.dev/cbp-***-443012/cbp-next-app/cbp-release-sandbox:e6336760e8a8732874e749a8bd0332a2b8e79339"
-          
-              IMAGE_TO_DEPLOY_BASE64=$(echo -n "$IMAGE_NAME" | base64)
-              echo "Base64 Encoded IMAGE_NAME: $IMAGE_TO_DEPLOY_BASE64"
-          
-              DECODED_IMAGE_NAME=$(echo "$IMAGE_TO_DEPLOY_BASE64" | base64 --decode)
-              echo "Decoded IMAGE_TO_DEPLOY: $DECODED_IMAGE_NAME"
+              IMAGE_NAME="us-central1-docker.pkg.dev/cbp-***-443012/cbp-next-app/cbp-release-sandbox:e6336760e8a8732874e749a8bd0332a2b8e79339" >> "$GITHUB_OUTPUT"
 
 
     staging-deploy:
