@@ -21,7 +21,8 @@ jobs:
       if: ${{ github.event.action != 'labeled' || github.event.label.name == 'Ready for Review' }}
       steps:
         - name: Print
-          run: echo "Hello"          
+          run: |
+              echo "Sandbox"          
 
     staging-deploy:
         needs: CI
