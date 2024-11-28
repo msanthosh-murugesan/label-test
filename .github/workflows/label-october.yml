@@ -23,7 +23,6 @@ jobs:
         - name: Print
           run: |
               echo "Sandbox"    
-              jobs:
 
               IMAGE_NAME="us-central1-docker.pkg.dev/cbp-***-443012/cbp-next-app/cbp-release-sandbox:e6336760e8a8732874e749a8bd0332a2b8e79339"
           
