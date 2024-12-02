@@ -32,9 +32,11 @@ jobs:
           ref: ${{ inputs.ref }}
 
       - run: |
-          echo "Resetting cbp-release/sandbox branch to commit ${{ inputs.ref }}"
-          git fetch origin cbp-release/sandbox --quiet
-          git update-ref refs/heads/cbp-release/sandbox ${{ inputs.ref }}
+          echo "Resetting cbp-release/sandbox branch with ${{ inputs.ref }}"
+          git branch -f cbp-release/sandbox ${{ inputs.ref }}
+          git push -f origin cbp-release/sandbox    
+
+      - run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
           git commit --allow-empty -m "Force push to update cbp-release/sandbox to ${{ inputs.ref }}"
