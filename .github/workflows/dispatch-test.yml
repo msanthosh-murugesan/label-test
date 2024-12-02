@@ -31,14 +31,18 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
 
-      # - run: |
-      #     echo "Resetting cbp-release/sandbox branch with ${{ inputs.ref }}"
-      #     git branch -f cbp-release/sandbox ${{ inputs.ref }}
-      #     git push -f origin cbp-release/sandbox    
+      - run: |
+          echo "Resetting cbp-release/sandbox branch with ${{ inputs.ref }}"
+          git branch -f cbp-release/sandbox ${{ inputs.ref }}
+          git push -f origin cbp-release/sandbox  
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: cbp-release/sandbox      
 
       - name: Checkout cbp-release/sandbox Branch
         run: |
-          git checkout cbp-release/sandbox
           git config user.name "Actions Bot"
           git config user.email "test@github.com"
           
