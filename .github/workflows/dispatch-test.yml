@@ -1,0 +1,38 @@
+name: (cbp) Trigger Release
+
+on:
+  # trigger manually from GH web ui
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Environment to release to'
+        required: true
+        type: choice
+        options:
+          - staging
+          - prealpha
+          - production
+          - sandbox
+      ref:
+        description:
+          'The following textbox applies only for sandbox environment. It will
+          be ignored for other environments. Please enter the name of the branch
+          you would like to release to sandbox env.'
+        default: 'main'
+
+jobs:
+  trigger-sandbox-release:
+    name: Sandbox branch reset
+    if: inputs.target == 'sandbox'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - run: |
+          echo "Resetting cbp-release/sandbox branch with ${{ inputs.ref }}"
+          git branch -f cbp-release/sandbox ${{ inputs.ref }}
+          git push -f origin cbp-release/sandbox
+      - run: echo "🍏 This job's status is ${{ job.status }}."
