@@ -32,7 +32,8 @@ jobs:
           ref: ${{ inputs.ref }}
 
       - run: |
-          echo "Resetting cbp-release/sandbox branch with ${{ inputs.ref }}"
-          git branch -f cbp-release/sandbox ${{ inputs.ref }}
-          git push -f origin cbp-release/sandbox
+          echo "Resetting cbp-release/sandbox branch to commit ${{ inputs.ref }}"
+          git fetch origin ${{ inputs.ref }} --quiet
+          git update-ref refs/heads/cbp-release/sandbox ${{ inputs.ref }}
+          git push origin cbp-release/sandbox --force-with-lease
       - run: echo "🍏 This job's status is ${{ job.status }}."
