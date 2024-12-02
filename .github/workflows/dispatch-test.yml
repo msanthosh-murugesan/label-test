@@ -39,6 +39,6 @@ jobs:
       - run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
-          git commit --allow-empty -m "Force push to update cbp-release/sandbox to ${{ inputs.ref }}"
-          git push origin cbp-release/sandbox --force
+          git commit --allow-empty -m "Update cbp-release/sandbox to ${{ inputs.ref }}"
+          git push origin cbp-release/sandbox
       - run: echo "🍏 This job's status is ${{ job.status }}."
