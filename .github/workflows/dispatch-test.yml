@@ -26,10 +26,10 @@ jobs:
     if: inputs.target == 'sandbox'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref }}
+      # - name: Checkout repo
+      #   uses: actions/checkout@v4
+      #   with:
+      #     ref: ${{ inputs.ref }}
 
       # - run: |
       #     echo "Resetting cbp-release/sandbox branch with ${{ inputs.ref }}"
