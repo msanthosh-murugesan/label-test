@@ -43,12 +43,11 @@ jobs:
 
       - name: Checkout cbp-release/sandbox Branch
         run: |
+          git checkout cbp-release/sandbox
           git config user.name "Actions Bot"
           git config user.email "test@github.com"
           
-          echo "Triggering commit at $(date)" >> trigger-file.txt
-          git add trigger-file.txt
-          git commit -m "Trigger workflow with new commit"
+          git commit --allow-empty -m "Trigger workflow with new commit"
           
           git push origin cbp-release/sandbox
 
