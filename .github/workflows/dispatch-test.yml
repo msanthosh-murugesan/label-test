@@ -35,8 +35,8 @@ jobs:
           echo "Resetting cbp-release/sandbox branch to commit ${{ inputs.ref }}"
           git fetch origin cbp-release/sandbox --quiet
           git update-ref refs/heads/cbp-release/sandbox ${{ inputs.ref }}
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
           git commit --allow-empty -m "Force push to update cbp-release/sandbox to ${{ inputs.ref }}"
-          git config --global user.email "test@gmail.com"
-          git config --global user.name "Bot"
           git push origin cbp-release/sandbox --force
       - run: echo "🍏 This job's status is ${{ job.status }}."
