@@ -33,7 +33,8 @@ jobs:
 
       - run: |
           echo "Resetting cbp-release/sandbox branch to commit ${{ inputs.ref }}"
-          git fetch origin cbp-release/sandbox --quiet # Fetch the latest state of the branch
+          git fetch origin cbp-release/sandbox --quiet
           git update-ref refs/heads/cbp-release/sandbox ${{ inputs.ref }}
+          git commit --allow-empty -m "Force push to update cbp-release/sandbox to ${{ inputs.ref }}"
           git push origin cbp-release/sandbox --force
       - run: echo "🍏 This job's status is ${{ job.status }}."
