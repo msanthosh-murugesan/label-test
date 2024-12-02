@@ -42,7 +42,9 @@ jobs:
           git config user.name "Actions Bot"
           git config user.email "test@github.com"
           
-          git commit --allow-empty -m "Trigger workflow with an empty commit"
+          echo "Triggering commit at $(date)" >> trigger-file.txt
+          git add trigger-file.txt
+          git commit -m "Trigger workflow with new commit"
           
           git push origin cbp-release/sandbox
 
