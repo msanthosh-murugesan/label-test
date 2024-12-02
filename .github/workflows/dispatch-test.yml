@@ -39,13 +39,11 @@ jobs:
       - name: Checkout cbp-release/sandbox Branch
         run: |
           git checkout cbp-release/sandbox
-
-      - name: Create New Commit to Trigger Workflow
-        run: |
-          git config user.name "GitHub Actions Bot"
-          git config user.email "actions@github.com"
+          git config user.name "Actions Bot"
+          git config user.email "test@github.com"
           
           git commit --allow-empty -m "Trigger workflow with an empty commit"
           
           git push origin cbp-release/sandbox
+
       - run: echo "🍏 This job's status is ${{ job.status }}."
