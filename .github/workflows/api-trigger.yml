@@ -1,9 +1,7 @@
 name: Santhosh api trigger
 
 on:
-  pull_request:
-    branches: [main]
-    types: [closed]
+  workflow_dispatch
 
 jobs:
   CI:
