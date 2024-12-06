@@ -34,6 +34,8 @@ jobs:
               
               const versionBranchName = versionRef
                 .replace('refs/heads/', '')
+                .replace(/\//g, '-')
+                .replace(/_/g, '-')
                 .replace(/\/(bug|feature|config|release|spike|hotfix)\//gi,'-')
                 .toLowerCase()
                 .substr(0, 63 - 1 - versionSha.length - '-dot-'.length - serviceName.length - '-dot-'.length - projectId.length); // https://cloud.google.com/appengine/docs/standard/quotas#services,-versions,-and-instances
