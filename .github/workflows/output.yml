@@ -1,0 +1,74 @@
+name: Printing outputs
+
+on:
+  pull_request:
+    types: [ opened, synchronize, closed ]
+
+jobs:
+  detect-environment:
+      runs-on: ubuntu-latest
+      outputs:
+        environment-name: ${{ steps.detect.outputs.environment-name }}
+        deploy-enabled: ${{ steps.detect.outputs.deploy-enabled }}
+        project-version: ${{ steps.detect.outputs.project-version }}
+        project-id: ${{ steps.detect.outputs.project-id }}
+        task: ${{ steps.detect.outputs.task }}
+      steps:
+        - id: detect
+          uses: actions/github-script@v7
+          with:
+            script: |
+              const { GITHUB_SHA } = process.env
+              const pull_request = context.payload.pull_request
+              const versionRef = pull_request.head.ref
+              
+              let deployEnvName = 'others';
+              let projectId = 'testing';
+              let task = 'appengineDeploy';
+              
+              const branchName = pull_request?.base?.ref ?? context.payload.ref?.replace('refs/heads/', '');
+              
+              const versionSha = GITHUB_SHA.substr(0, 8);
+              
+              const serviceName = 'default';
+              
+              const versionBranchName = versionRef
+                .replace('refs/heads/', '')
+                .replace(/\//g, '-')
+                .replace(/_/g, '-')
+                .replace(/\/(bug|feature|config|release|spike|hotfix)\//gi,'-')
+                .toLowerCase()
+                .substr(0, 63 - 1 - versionSha.length - '-dot-'.length - serviceName.length - '-dot-'.length - projectId.length); // https://cloud.google.com/appengine/docs/standard/quotas#services,-versions,-and-instances
+              
+              const projectVersion = `${versionBranchName}-${versionSha}` 
+              
+              switch(branchName){
+              case 'release/testing':
+                deployEnvName = 'testing'
+                break;
+              case 'release/alpha':
+                deployEnvName = 'alpha';
+                projectId = 'live';
+                task = 'appengineDeployLive';
+                break;
+              case 'main':
+                deployEnvName = 'production'
+                projectId = 'live';
+                task = 'appengineDeployLive';
+                break;
+              };
+              
+              const deployEnabled = pull_request?.merged || deployEnvName == 'others';
+              
+              const outputs = {
+                'environment-name': deployEnvName,
+                'deploy-enabled': deployEnabled,
+                'project-version': projectVersion,
+                'project-id': projectId,
+                'task' : task,
+              };
+              
+              console.log('Setting outputs', outputs);
+              for(const key of Object.keys(outputs)){
+                core.setOutput(key, outputs[key]);
+              } 

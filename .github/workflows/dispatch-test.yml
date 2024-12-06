@@ -26,13 +26,29 @@ jobs:
     if: inputs.target == 'sandbox'
     runs-on: ubuntu-latest
     steps:
+      # - name: Checkout repo
+      #   uses: actions/checkout@v4
+      #   with:
+      #     ref: ${{ inputs.ref }}
+
+      # - run: |
+      #     echo "Resetting cbp-release/sandbox branch with ${{ inputs.ref }}"
+      #     git branch -f cbp-release/sandbox ${{ inputs.ref }}
+      #     git push -f origin cbp-release/sandbox  
+
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref }}
+          ref: cbp-release/sandbox      
 
-      - run: |
-          echo "Resetting cbp-release/sandbox branch with ${{ inputs.ref }}"
-          git branch -f cbp-release/sandbox ${{ inputs.ref }}
-          git push -f origin cbp-release/sandbox
+      - name: Checkout cbp-release/sandbox Branch
+        run: |
+          git checkout cbp-release/sandbox
+          git config user.name "Actions Bot"
+          git config user.email "test@github.com"
+          
+          git commit --allow-empty -m "Trigger workflow with new commit"
+          
+          git push origin cbp-release/sandbox
+
       - run: echo "🍏 This job's status is ${{ job.status }}."
