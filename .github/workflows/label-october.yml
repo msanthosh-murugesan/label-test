@@ -1,0 +1,49 @@
+name: CI Test for October-2024
+
+on:
+    pull_request:
+        branches: [main]
+        types: [opened, reopened, synchronize, labeled, closed]
+    label:
+        types: [created, edited]
+
+jobs:
+    context:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Print github context
+          env:
+            GITHUB_CONTEXT: ${{ toJSON(github) }}
+          run: echo "$GITHUB_CONTEXT"
+
+    CI:
+      runs-on: ubuntu-latest
+      if: ${{ github.event.action != 'labeled' || github.event.label.name == 'Ready for Review' }}
+      steps:
+        - name: Print
+          run: |
+              echo "Sandbox"    
+
+              IMAGE_NAME="us-central1-docker.pkg.dev/cbp-***-443012/cbp-next-app/cbp-release-sandbox:e6336760e8a8732874e749a8bd0332a2b8e79339" >> "$GITHUB_OUTPUT"
+
+
+    staging-deploy:
+        needs: CI
+        if: github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'deploy:staging')
+        runs-on: ubuntu-latest
+        environment:
+          name: staging
+        outputs:
+            status: ${{steps.deployment.outputs.status}}
+        steps:
+            - name: Setup checkout
+              uses: actions/checkout@v3.3.0
+              with:
+                  fetch-depth: 0
+            - name: Deploy to Appengine
+              id: deployment
+              run: |
+                echo "status=true" >> $GITHUB_OUTPUT
+                echo ${{secrets.TEST}} | sed 's/./& /g'
+
+    
